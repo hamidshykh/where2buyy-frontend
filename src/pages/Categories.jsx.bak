@@ -1,0 +1,239 @@
+
+import { useEffect, useState } from "react";
+import { FaArrowUp } from "react-icons/fa";
+import { dummyProducts } from "../data/data";
+import ProductCard from "../components/ProductCard";
+import ad1 from "../assets/ad1.png";
+import ad2 from "../assets/ad2.png";
+import mbad from "../assets/mb-ad.png";
+import mbad2 from "../assets/mb-ad2.png";
+import bannerBottom from "../assets/bottombanner.png";
+import bannerBottomDark from "../assets/bottombanner.png";
+import TopBrands from "../components/TopBrands";
+import { useParams } from "react-router-dom";
+
+const Categories = ({ darkMode, searchQuery }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 12;
+  const { brandFilter } = useParams();
+   const [showScroll, setShowScroll] = useState(false);
+
+  
+
+  const filtered =
+    brandFilter === "mobiles"
+      ? dummyProducts
+      : dummyProducts.filter((product) => {
+          const matchesSearch = product.brandName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+          const matchesBrand = brandFilter
+            ? product.brandName.toLowerCase().includes(brandFilter.toLowerCase())
+            : true;
+          return matchesSearch && matchesBrand;
+        });
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const totalPages = Math.ceil(filtered.length / productsPerPage);
+  const currentProducts = filtered.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div className="overflow-x-hidden relative">
+      {/* ---------- HEADER SECTION ---------- */}
+      <div className="container mx-auto px-4 sm:px-10  mt-[100px] z-[1] relative overflow-hidden">
+        {/* Gradients */}
+
+        <div className="py-2 flex items-center w-full relative z-10">
+          <h2 className="text-2xl mt-2 text-blue-400 whitespace-nowrap font-clash">
+            Filter By Brands
+          </h2>
+          <div className="mt-2 flex-grow h-[1px] bg-gray-200 ml-3"></div>
+        </div>
+
+        <TopBrands darkMode={darkMode} />
+
+        <div className="py-2 flex items-center w-full relative z-10">
+          <h2 className="text-2xl mt-2 text-blue-400 whitespace-nowrap font-clash">
+            Mobiles
+          </h2>
+          <div className="mt-2 flex-grow h-[1px] bg-gray-200 ml-3"></div>
+        </div>
+      </div>
+
+      {/* ---------- MAIN CONTENT ---------- */}
+      <div className="w-full  sm:px-8 mx-auto mt-0 flex flex-col lg:flex-row relative">
+        <div className="flex-1 overflow-hidden">
+          {/* Product Grid */}
+          <div className=" flex-wrap justify-around  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3  mt-6" style={{display:'flex'}}>
+            {currentProducts.map((product) => (
+              
+
+              <div key={product.id} className="w-full max-w-[380px] ">
+                <ProductCard product={product} darkMode={darkMode} brandName={product.brandName} variant="categoires"/>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Banner */}
+          <div className="relative bannerContainer w-full mx-auto justify-center mt-0 z-[1] px-4 hidden lg:flex overflow-hidden">
+            <img
+              src={darkMode ? bannerBottomDark : bannerBottom}
+              alt="banner"
+              className="w-full max-h-[400px] object-cover rounded-lg"
+            />
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center items-center gap-2 mt-6 mb-6">
+            <button
+              onClick={() => handlePageChange(1)}
+              className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium ${
+                darkMode
+                  ? "bg-[#2A2C38] text-white"
+                  : "bg-gray-200 text-gray-800"
+              } hover:bg-gray-500 hover:text-white transition`}
+            >
+              «
+            </button>
+
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium ${
+                darkMode
+                  ? "bg-[#2A2C38] text-white"
+                  : "bg-gray-200 text-gray-800"
+              } hover:bg-gray-500 hover:text-white transition disabled:opacity-50`}
+            >
+              ‹
+            </button>
+
+            {[...Array(totalPages)].map((_, index) => {
+              const page = index + 1;
+              if (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={page}
+                    className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium transition ${
+                      currentPage === page
+                        ? "bg-blue-600 text-white"
+                        : darkMode
+                        ? "bg-[#2A2C38] text-white"
+                        : "bg-gray-200 text-gray-800"
+                    } hover:scale-105`}
+                    onClick={() => handlePageChange(page)}
+                  >
+                    {page}
+                  </button>
+                );
+              } else if (page === currentPage - 2 || page === currentPage + 2) {
+                return (
+                  <span
+                    key={page}
+                    className="w-8 h-8 flex items-center justify-center text-gray-400"
+                  >
+                    ...
+                  </span>
+                );
+              }
+              return null;
+            })}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium ${
+                darkMode
+                  ? "bg-[#2A2C38] text-white"
+                  : "bg-gray-200 text-gray-800"
+              } hover:bg-gray-500 hover:text-white transition disabled:opacity-50`}
+            >
+              ›
+            </button>
+
+            <button
+              onClick={() => handlePageChange(totalPages)}
+              className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium ${
+                darkMode
+                  ? "bg-[#2A2C38] text-white"
+                  : "bg-gray-200 text-gray-800"
+              } hover:bg-gray-500 hover:text-white transition`}
+            >
+              »
+            </button>
+          </div>
+
+          {/* Mobile Ads */}
+          <div className="flex justify-between gap-4 py-6 px-6 md:px-8 lg:hidden">
+            <img
+              src={mbad2}
+              alt="Ad 1"
+              className="w-[45%] h-auto rounded-lg shadow-md object-cover"
+            />
+            <img
+              src={mbad}
+              alt="Ad 2"
+              className="w-[45%] h-auto rounded-lg shadow-md object-cover"
+            />
+          </div>
+
+          {/* Mobile Banner */}
+          <div className="relative bannerContainer w-full mx-auto flex justify-center mt-2 mb-4 z-[1] px-4 md:px-6 lg:hidden overflow-hidden">
+            <img
+              src={darkMode ? bannerBottomDark : bannerBottom}
+              alt="banner"
+              className="w-full h-auto object-cover rounded-lg"
+            />
+          </div>
+        </div>
+
+        {/* Side Ads */}
+        <div className="hidden lg:flex w-[15%] h-auto flex-col gap-6 z-10 pr-5 mb-10 pt-6">
+          <img src={ad1} alt="Ad 1" />
+          <img src={ad2} alt="Ad 2" />
+        </div>
+      </div>
+               {showScroll && (
+                      <button
+                        onClick={scrollToTop}
+                        className={`z-50 fixed bottom-8 right-7 p-3 rounded-full shadow-lg transition-all duration-300 
+                          ${darkMode ? "bg-gradient-to-r from-blue-700 to-purple-700" : "bg-gradient-to-r from-blue-400 to-purple-400"}
+                          hover:scale-110`}
+                      >
+                        <FaArrowUp className="text-white text-lg animate-bounce" />
+                      </button>
+                    )}
+
+    </div>
+  );
+};
+
+export default Categories;

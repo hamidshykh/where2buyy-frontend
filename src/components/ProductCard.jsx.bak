@@ -1,0 +1,139 @@
+import { useNavigate } from "react-router-dom"
+import ribbonLight from "../assets/ribbonLight.png";
+import ribbonDark from "../assets/ribbonDark.png";
+import { useState } from "react";
+
+const ProductCard = ({ product, darkMode, variant,brandName }) => {
+  const navigate = useNavigate();
+
+  useState(() => {
+    console.log("Brand from ProductCard:", brandName);
+  }, [brandName]);
+
+  return (
+    <div
+      onClick={() => navigate(`/${brandName}/${product.sku}`)}
+      className="cursor-pointer relative overflow-visible pt-8"
+    >
+      <div
+        className="flex w-full max-w-[330px] mx-auto h-[400px] rounded-2xl p-8 shadow-md mb-10  z-10"
+        style={{
+          background: darkMode
+            ? "linear-gradient(150deg, rgba(70, 149, 234, 0.6) 0%, rgba(30, 5, 45, 0.73) 100%)"
+            : "linear-gradient(150deg, rgba(111, 180, 255, 1) 0%, rgba(249, 240, 255, 1) 100%)",
+        }}  
+      >
+        {/* Ribbon */}
+        <div
+          className={`absolute top-[-13px] rounded-xl bg-no-repeat bg-contain p-4 flex flex-col gap-3 z-10 pt-[50px] ${
+            variant === "topRated"
+              ? "left-[-10px] 2xl:left-[10px] xl:left-[0px] lg:left-[-10px] md:left-[-10px] sm:left-[-10px]"
+              : "left-[20px]"
+          }`}
+          style={{
+            backgroundImage: `url(${darkMode ? ribbonDark : ribbonLight})`,
+            width: "230px",
+            height: "420px",
+            backgroundSize: "contain",
+            backgroundRepeat: "no-repeat",
+          }}
+        >
+          {product?.prices?.map((p, i) => (
+            <div key={i} className="flex flex-col items-start ml-11 gap-3">
+              <img src={p.logo} alt={p.site} className=" h-auto " />
+              <span
+                className={`text-xs ${
+                  darkMode ? "text-[#CED1D5]" : "text-[#292D32]"
+                }`}
+              >
+                Rs {p.price}
+              </span>
+              {i < product.prices.length - 1 && (
+                <div className="w-10 h-[2px] bg-gray-300 "></div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Compare All button */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/${brandName}/${product.id}`);
+          }}
+          className={`absolute bottom-[3.1rem] bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-2 rounded-full text-xs ${
+            variant === "topRated"
+              ? "left-[2.2rem] 2xl:left-[3.4rem] xl:left-[2.8rem] lg:left-[2.2rem] md:left-[2.2rem] sm:left-[2.2rem]"
+              : "left-[4rem] "
+          }`}
+        >
+          Compare All
+        </button>
+
+        {/* Product Image */}
+        <div className="flex justify-end ">
+          <img
+            src={product.image}
+            alt={product.title}
+            className={`absolute w-[200px] h-[250px] object-contain ${
+              variant === "topRated"
+                ? "left-[6.5rem] 2xl:left-[7.7rem] xl:left-[6rem] lg:left-[6rem] md:left-[6rem] sm:left-[6rem]"
+                : "left-[8rem]"
+            }`}
+          />
+        </div>
+
+        {/* Product Info */}
+        <div className="absolute mt-4 ml-25 text-left z-10 bottom-12">
+          <h3
+            className={`${
+              darkMode ? "text-[#CED1D5]" : "text-blue-500"
+            } font-semibold text-sm leading-tight`}
+          >
+            {product.title}
+          </h3>
+          <div className="flex gap-3 mt-2 text-xs items-center">
+            <div className="flex flex-col ">
+              <span
+                className={`block ${
+                  darkMode ? "text-[#CED1D5]" : "text-[#292D32]"
+                }`}
+              >
+                Min
+              </span>
+              <span
+                className={`font-semibold ${
+                  darkMode ? "text-[#70CF85]" : "text-[#249B3E]"
+                } whitespace-nowrap`}
+              >
+                Rs. {product.minPrice}
+              </span>
+            </div>
+
+            {/* Horizontal line between Min and Max */}
+            <div className="w-5 h-[2px] bg-gray-300"></div>
+
+            <div className="flex flex-col">
+              <span
+                className={`block ${
+                  darkMode ? "text-[#CED1D5]" : "text-[#292D32]"
+                }`}
+              >
+                Max
+              </span>
+              <span
+                className={`font-semibold ${
+                  darkMode ? "text-[#E51A1A]" : "text-[#FF0000]"
+                } whitespace-nowrap`}
+              >
+                Rs. {product.maxPrice}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
