@@ -6,6 +6,8 @@ import banner from "../assets/bottombanner.png";
 import bannerDark from "../assets/bottombanner.png";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 
+import { API_BASE_URL } from '../config';
+
 const TopRated = ({ darkMode, searchQuery }) => {
   const [filter, setFilter] = useState("all");
   const [showArrows, setShowArrows] = useState(false);
@@ -15,7 +17,7 @@ const TopRated = ({ darkMode, searchQuery }) => {
 
   useEffect(() => {
     fetch(
-      `http://127.0.0.1:8000/home-mobiles`
+      `${API_BASE_URL}/home-mobiles`
     )
       .then((res) => res.json())
       .then((data) => {

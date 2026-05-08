@@ -18,6 +18,8 @@ import mobilemall from "../assets/mobilemall.svg";
 import pakmobizone from "../assets/pakmobizone.svg";
 import priceoye from "../assets/priceoye.svg";
 
+import { API_BASE_URL } from '../config';
+
 const siteLogos = {
   daraz,
   homeshopping,
@@ -45,7 +47,7 @@ const ProductDetail = ({ darkMode }) => {
 
   useEffect(() => {
     fetch(
-      `http://127.0.0.1:8000/product/${encodeURIComponent(slug)}`
+      `${API_BASE_URL}/product/${encodeURIComponent(slug)}`
     )
       .then((res) => res.json())
       .then((data) => {

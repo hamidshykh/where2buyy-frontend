@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import productImage from "../assets/product.png";
 import userImage from "../assets/dealProfile.png";
 
+import { API_BASE_URL } from '../config';
+
 const TopDeals = ({ darkMode }) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [items, setProducts] = useState([]);
@@ -14,7 +16,7 @@ const TopDeals = ({ darkMode }) => {
 
   useEffect(() => {
     fetch(
-      `http://127.0.0.1:8000/home-deals`
+      `${API_BASE_URL}/home-deals`
     )
       .then((res) => res.json())
       .then((data) => {

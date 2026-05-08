@@ -5,6 +5,8 @@ import { FaAngleDown } from "react-icons/fa";
 //import { commentsData } from "../data/data";
 import { desc } from "framer-motion/client";
 
+import { API_BASE_URL } from '../config';
+
 const TABS = ["Product Description", "Specification"];
 
 const ProductDetailsTabs = ({ darkMode, product }) => {
@@ -18,7 +20,7 @@ const [commentsData, setComments] = useState([]);
   
   useEffect(() => {
     fetch(
-      `http://127.0.0.1:8000/product-comments/${encodeURIComponent(product.id)}`
+      `${API_BASE_URL}/product-comments/${encodeURIComponent(product.id)}`
     )
       .then((res) => res.json())
       .then((data) => {
